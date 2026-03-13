@@ -51,6 +51,8 @@ safe-outputs:
     labels: [dependencies, aspire, automated]
     close-older-issues: true
     max: 1
+  noop:
+    report-as-issue: false
 timeout-minutes: 45
 strict: true
 runtimes:

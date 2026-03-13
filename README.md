@@ -9,5 +9,6 @@ This repository now includes a weekly `gh-aw` workflow source at `.github/workfl
 - To let `Sync agentic workflows` push generated workflow files back to the repository, add a `GH_AW_SYNC_TOKEN` secret with `contents:write` and `workflows:write` access.
 - Without `GH_AW_SYNC_TOKEN`, the sync workflow still uploads the generated `.lock.yml` files as an artifact so a maintainer can download and commit them manually.
 - Without `GH_AW_SYNC_TOKEN`, the sync workflow also prints the generated lockfile content to the run log between `__BEGIN_GH_AW_LOCKFILE__` and `__END_GH_AW_LOCKFILE__` markers for manual recovery.
+- Weekly no-op runs are intentionally silent: if the repository is already on the latest stable Aspire version, the workflow exits cleanly without opening a PR or issue.
 - `eng/update-aspire-dependencies.py` provides a deterministic way to update the centralized Aspire and related dependency pins.
 - `eng/validate-aspire-update.sh` runs the build and test validation path that the weekly upgrade workflow should use before it opens a PR.
