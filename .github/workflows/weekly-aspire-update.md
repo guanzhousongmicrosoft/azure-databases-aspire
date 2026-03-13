@@ -2,8 +2,7 @@
 description: Checks for newer Aspire releases, updates repo version pins, runs validation, and opens a reviewable PR when the upgrade is clean.
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 9 * * MON"
+  schedule: weekly on monday around 09:00
 permissions:
   contents: read
   issues: read
