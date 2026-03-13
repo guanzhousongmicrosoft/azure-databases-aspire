@@ -35,9 +35,22 @@ safe-outputs:
     title-prefix: "[aspire-update] "
     labels: [dependencies, aspire, automated]
     draft: true
+    max: 1
+    base-branch: main
+    preserve-branch-name: true
+    protected-files: allowed
+    allowed-files:
+      - Directory.Packages.props
+      - global.json
+      - azure-databases-aspire.sln
+      - playground/**
+      - ValidationApp/**
+      - src/Aspire.Hosting.DocumentDB/**
+      - tests/**
   create-issue:
     title-prefix: "[aspire-update] "
     labels: [dependencies, aspire, automated]
+    close-older-issues: true
     max: 1
 timeout-minutes: 45
 strict: true
