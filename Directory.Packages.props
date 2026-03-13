@@ -24,9 +24,9 @@
     <OpenTelemetryExporterInMemoryVersion>1.9.0</OpenTelemetryExporterInMemoryVersion>
     <XunitVersion>2.9.3</XunitVersion>
     <XunitAbstractionsVersion>2.0.3</XunitAbstractionsVersion>
-    <XunitAnalyzersVersion>1.15.0</XunitAnalyzersVersion>
-    <XunitAssertVersion>2.9.0</XunitAssertVersion>
-    <XunitCoreVersion>2.9.0</XunitCoreVersion>
+    <XunitAnalyzersVersion>1.18.0</XunitAnalyzersVersion>
+    <XunitAssertVersion>2.9.3</XunitAssertVersion>
+    <XunitCoreVersion>2.9.3</XunitCoreVersion>
     <XunitRunnerVisualStudioVersion>2.8.2</XunitRunnerVisualStudioVersion>
   </PropertyGroup>
 
