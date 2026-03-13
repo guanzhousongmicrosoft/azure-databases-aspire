@@ -74,7 +74,7 @@ Check whether a newer stable Aspire version (minor or major) is available.
   1. update the repo version pins and any tightly related direct dependencies that need to move with the upgrade
   2. make only the minimum source or test compatibility edits required for the repo to build and test cleanly
   3. run validation
-  4. open one draft PR if validation passes
+  4. open one draft pull request if validation passes
   5. otherwise open one issue with actionable failure diagnostics
 
 Ignore preview, RC, beta, or nightly versions.
