@@ -30,6 +30,13 @@ jobs:
       - name: Compile agentic workflows
         run: $HOME/.local/share/gh/extensions/gh-aw/gh-aw compile --validate --strict
 
+      - name: Upload generated lock files
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-agentic-workflows
+          path: .github/workflows/*.lock.yml
+          if-no-files-found: ignore
+
       - name: Commit generated lock files
         env:
           GH_AW_SYNC_TOKEN: ${{ secrets.GH_AW_SYNC_TOKEN }}

@@ -71,7 +71,7 @@ Check whether a newer stable Aspire version (minor or major) is available.
 
 - If no newer stable Aspire version exists, call `noop`.
 - If a newer version exists:
-  1. update the repo version pins and any tightly related direct dependencies that need to move with the upgrade
+  1. update the repo version pins and any tightly related direct dependencies that need to move with the new Aspire release
   2. make only the minimum source or test compatibility edits required for the repo to build and test cleanly
   3. run validation
   4. open one draft pull request if validation passes
