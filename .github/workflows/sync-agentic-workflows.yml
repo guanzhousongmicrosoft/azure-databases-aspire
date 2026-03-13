@@ -37,6 +37,21 @@ jobs:
           path: .github/workflows/*.lock.yml
           if-no-files-found: ignore
 
+      - name: Print generated lock files when sync token is missing
+        env:
+          GH_AW_SYNC_TOKEN: ${{ secrets.GH_AW_SYNC_TOKEN }}
+        run: |
+          if [ -n "$GH_AW_SYNC_TOKEN" ]; then
+            exit 0
+          fi
+
+          shopt -s nullglob
+          for file in .github/workflows/*.lock.yml; do
+            echo "__BEGIN_GH_AW_LOCKFILE__ $file"
+            cat "$file"
+            echo "__END_GH_AW_LOCKFILE__ $file"
+          done
+
       - name: Commit generated lock files
         env:
           GH_AW_SYNC_TOKEN: ${{ secrets.GH_AW_SYNC_TOKEN }}
