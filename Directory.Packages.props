@@ -4,31 +4,57 @@
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
 
+  <PropertyGroup Label="Production versions">
+    <AspireVersion>13.1.2</AspireVersion>
+    <AspNetCoreHealthChecksMongoDbVersion>9.0.0</AspNetCoreHealthChecksMongoDbVersion>
+    <MicrosoftExtensionsConfigurationBinderVersion>9.0.11</MicrosoftExtensionsConfigurationBinderVersion>
+    <MicrosoftExtensionsDiagnosticsHealthChecksVersion>9.0.11</MicrosoftExtensionsDiagnosticsHealthChecksVersion>
+    <MicrosoftExtensionsHostingAbstractionsVersion>9.0.11</MicrosoftExtensionsHostingAbstractionsVersion>
+    <MicrosoftExtensionsHttpResilienceVersion>10.1.0</MicrosoftExtensionsHttpResilienceVersion>
+    <MinVerVersion>6.0.0</MinVerVersion>
+    <MongoDBDriverVersion>3.5.0</MongoDBDriverVersion>
+    <OpenTelemetryExtensionsHostingVersion>1.14.0</OpenTelemetryExtensionsHostingVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Test-only versions">
+    <JsonSchemaNetVersion>7.3.3</JsonSchemaNetVersion>
+    <MicrosoftDotNetRemoteExecutorVersion>9.0.0-beta.25204.5</MicrosoftDotNetRemoteExecutorVersion>
+    <MicrosoftExtensionsHostingVersion>9.0.11</MicrosoftExtensionsHostingVersion>
+    <MicrosoftNETTestSdkVersion>17.10.0</MicrosoftNETTestSdkVersion>
+    <OpenTelemetryExporterInMemoryVersion>1.9.0</OpenTelemetryExporterInMemoryVersion>
+    <XunitVersion>2.9.3</XunitVersion>
+    <XunitAbstractionsVersion>2.0.3</XunitAbstractionsVersion>
+    <XunitAnalyzersVersion>1.15.0</XunitAnalyzersVersion>
+    <XunitAssertVersion>2.9.0</XunitAssertVersion>
+    <XunitCoreVersion>2.9.0</XunitCoreVersion>
+    <XunitRunnerVisualStudioVersion>2.8.2</XunitRunnerVisualStudioVersion>
+  </PropertyGroup>
+
   <ItemGroup Label="Production">
-    <PackageVersion Include="Aspire.Hosting" Version="13.1.2" />
-    <PackageVersion Include="Aspire.Hosting.Testing" Version="13.1.2" />
-    <PackageVersion Include="AspNetCore.HealthChecks.MongoDb" Version="9.0.0" />
-    <PackageVersion Include="Aspire.MongoDB.Driver" Version="13.1.2" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.11" />
-    <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="9.0.11" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.11" />
-    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.1.0" />
-    <PackageVersion Include="MinVer" Version="6.0.0" />
-    <PackageVersion Include="MongoDB.Driver" Version="3.5.0" />
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
+    <PackageVersion Include="Aspire.Hosting" Version="$(AspireVersion)" />
+    <PackageVersion Include="Aspire.Hosting.Testing" Version="$(AspireVersion)" />
+    <PackageVersion Include="AspNetCore.HealthChecks.MongoDb" Version="$(AspNetCoreHealthChecksMongoDbVersion)" />
+    <PackageVersion Include="Aspire.MongoDB.Driver" Version="$(AspireVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="$(MicrosoftExtensionsConfigurationBinderVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="$(MicrosoftExtensionsDiagnosticsHealthChecksVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="$(MicrosoftExtensionsHostingAbstractionsVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="$(MicrosoftExtensionsHttpResilienceVersion)" />
+    <PackageVersion Include="MinVer" Version="$(MinVerVersion)" />
+    <PackageVersion Include="MongoDB.Driver" Version="$(MongoDBDriverVersion)" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="$(OpenTelemetryExtensionsHostingVersion)" />
   </ItemGroup>
 
   <ItemGroup Label="Test-only">
-    <PackageVersion Include="JsonSchema.Net" Version="7.3.3" />
-    <PackageVersion Include="Microsoft.DotNet.RemoteExecutor" Version="9.0.0-beta.25204.5" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.11" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
-    <PackageVersion Include="OpenTelemetry.Exporter.InMemory" Version="1.9.0" />
-    <PackageVersion Include="xunit" Version="2.9.3" />
-    <PackageVersion Include="xunit.abstractions" Version="2.0.3" />
-    <PackageVersion Include="xunit.analyzers" Version="1.15.0" />
-    <PackageVersion Include="xunit.assert" Version="2.9.0" />
-    <PackageVersion Include="xunit.core" Version="2.9.0" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageVersion Include="JsonSchema.Net" Version="$(JsonSchemaNetVersion)" />
+    <PackageVersion Include="Microsoft.DotNet.RemoteExecutor" Version="$(MicrosoftDotNetRemoteExecutorVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="$(MicrosoftExtensionsHostingVersion)" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="$(MicrosoftNETTestSdkVersion)" />
+    <PackageVersion Include="OpenTelemetry.Exporter.InMemory" Version="$(OpenTelemetryExporterInMemoryVersion)" />
+    <PackageVersion Include="xunit" Version="$(XunitVersion)" />
+    <PackageVersion Include="xunit.abstractions" Version="$(XunitAbstractionsVersion)" />
+    <PackageVersion Include="xunit.analyzers" Version="$(XunitAnalyzersVersion)" />
+    <PackageVersion Include="xunit.assert" Version="$(XunitAssertVersion)" />
+    <PackageVersion Include="xunit.core" Version="$(XunitCoreVersion)" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="$(XunitRunnerVisualStudioVersion)" />
   </ItemGroup>
 </Project>
