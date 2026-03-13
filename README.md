@@ -6,8 +6,8 @@ This repository now includes a weekly `gh-aw` workflow source at `.github/workfl
 
 - The active scheduled workflow is `.github/workflows/weekly-aspire-update.lock.yml`.
 - The source workflow schedule is `weekly on monday around 09:00`, and the current compiled workflow runs every Monday at `08:48 UTC`.
-- Pull requests that change agentic workflow source run `Validate agentic workflows`.
 - Pushes to `main` that change workflow source run `Sync agentic workflows`, which compiles the markdown workflow into its generated `.lock.yml` file.
+- `Sync agentic workflows` can also be run manually on a feature branch to validate and preview the generated `.lock.yml` before merge.
 - To let `Sync agentic workflows` push generated workflow files back to the repository, add a `GH_AW_SYNC_TOKEN` secret with `contents:write` and `workflows:write` access.
 - Without `GH_AW_SYNC_TOKEN`, the sync workflow still uploads the generated `.lock.yml` files as an artifact so a maintainer can download and commit them manually.
 - Without `GH_AW_SYNC_TOKEN`, the sync workflow also prints the generated lockfile content to the run log between `__BEGIN_GH_AW_LOCKFILE__` and `__END_GH_AW_LOCKFILE__` markers for manual recovery.
@@ -16,24 +16,18 @@ This repository now includes a weekly `gh-aw` workflow source at `.github/workfl
 - `eng/update-aspire-dependencies.py` provides a deterministic way to update the centralized Aspire and related dependency pins.
 - `eng/validate-aspire-update.sh` runs the build and test validation path that the weekly upgrade workflow should use before it opens a PR.
 
-### How the three workflows work together
+### How the workflows work together
 
-1. `Validate agentic workflows`
-
-   - File: `.github/workflows/validate-agentic-workflows.yml`
-   - Trigger: pull requests that change `.github/workflows/*.md`, plus manual dispatch
-   - Purpose: validates the markdown source workflows with `gh-aw validate --strict`
-   - Use this to catch frontmatter or `gh-aw` schema problems before merging
-
-2. `Sync agentic workflows`
+1. `Sync agentic workflows`
 
    - File: `.github/workflows/sync-agentic-workflows.yml`
    - Trigger: pushes to `main` that change `.github/workflows/*.md`, plus manual dispatch
    - Purpose: compiles markdown source workflows into committed `.lock.yml` workflows with `gh-aw compile --validate --strict`
+   - This is also the pre-merge check now: run it manually against your branch when you want to validate markdown source changes before merging
    - If `GH_AW_SYNC_TOKEN` is configured, it commits and pushes regenerated lock files automatically
    - If `GH_AW_SYNC_TOKEN` is not configured, it still succeeds but only uploads or prints the generated lock file for manual recovery
 
-3. `Weekly Aspire update agent`
+2. `Weekly Aspire update agent`
 
    - Files:
      - source: `.github/workflows/weekly-aspire-update.md`
@@ -56,8 +50,8 @@ This repository now includes a weekly `gh-aw` workflow source at `.github/workfl
 
 1. Edit only the markdown source workflow: `.github/workflows/weekly-aspire-update.md`.
 2. Do not hand-edit `.github/workflows/weekly-aspire-update.lock.yml` unless you are recovering a generated file from sync output.
-3. Open a pull request with the markdown workflow change.
-4. Wait for `Validate agentic workflows` to pass.
+3. Manually run `Sync agentic workflows` on your branch if you want a pre-merge validation and generated lockfile preview.
+4. Open a pull request with the markdown workflow change.
 5. Merge the pull request to `main`.
 6. Wait for `Sync agentic workflows` to compile the updated `.lock.yml`.
 7. If `GH_AW_SYNC_TOKEN` is configured, confirm the sync workflow pushed the regenerated lock file automatically.
