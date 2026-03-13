@@ -24,12 +24,10 @@ jobs:
           fetch-depth: 0
 
       - name: Install gh-aw CLI
-        uses: github/gh-aw/actions/setup-cli@v0.37.18
-        with:
-          version: v0.37.18
+        run: curl -sL https://raw.githubusercontent.com/github/gh-aw/v0.37.18/install-gh-aw.sh | bash -s v0.37.18
 
       - name: Compile agentic workflows
-        run: gh aw compile --validate --strict
+        run: $HOME/.local/share/gh/extensions/gh-aw/gh-aw compile --validate --strict
 
       - name: Commit generated lock files
         run: |
