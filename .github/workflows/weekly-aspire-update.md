@@ -37,7 +37,6 @@ safe-outputs:
     draft: true
     max: 1
     base-branch: main
-    preserve-branch-name: true
     protected-files: allowed
     allowed-files:
       - Directory.Packages.props
