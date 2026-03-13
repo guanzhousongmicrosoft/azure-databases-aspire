@@ -89,7 +89,7 @@ Ignore preview, RC, beta, or nightly versions.
 ## Required workflow
 
 1. Read the current Aspire version from `Directory.Packages.props`.
-2. Check for newer stable Aspire packages with `dotnet list azure-databases-aspire.sln package --outdated` and use the current direct package graph in this repository as the source of truth for what needs updating.
+2. Check for newer stable Aspire packages with `dotnet list azure-databases-aspire.sln package --outdated` and use the current direct package graph in this repository as the source of truth for the update scope.
 3. Search for open pull requests whose title starts with `[aspire-update] `. If one already targets the same Aspire version, call `noop` instead of opening a duplicate PR.
 4. If the repository is already on the latest stable Aspire version, call `noop`.
 5. Update the Aspire version and any tightly related direct dependency versions with `python3 eng/update-aspire-dependencies.py ...`.
