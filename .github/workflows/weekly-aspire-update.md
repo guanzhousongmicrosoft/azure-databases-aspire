@@ -51,38 +51,36 @@ in `Directory.Packages.props` using Central Package Management (CPM).
 The `Aspire.AppHost.Sdk` version is pinned in individual project files (grep
 for `Aspire.AppHost.Sdk` across `.csproj` files).
 
-### Step 1 — Discover current versions
+### Step 1 — Check for outdated packages
 
-1. Read `Directory.Packages.props` and note every `<PackageVersion>` entry and
-   its current version.
-2. Grep all `.csproj` files for `Aspire.AppHost.Sdk` and note its current
-   version.
+Run the .NET SDK's built-in outdated package check:
 
-### Step 2 — Check for newer stable versions on NuGet
-
-For each Aspire-related package (packages whose name starts with `Aspire.`),
-query the NuGet v3 flat-container API to find the latest **stable** version
-(no pre-release tags):
-
-```
-curl -s "https://api.nuget.org/v3-flatcontainer/{package-id-lowercase}/index.json"
+```bash
+dotnet restore azure-databases-aspire.sln
+dotnet list azure-databases-aspire.sln package --outdated --format json
 ```
 
-Parse the JSON `versions` array and pick the highest version that does NOT
-contain a hyphen (`-`). Compare it to the current pinned version.
+This produces a JSON report listing every package with a newer stable version
+available. Parse the output to identify which packages need updating and what
+the latest versions are.
 
-Also check for updates to other non-Aspire packages listed in
-`Directory.Packages.props` (e.g., `MongoDB.Driver`,
-`AspNetCore.HealthChecks.MongoDb`, `Microsoft.Extensions.*`, `MinVer`,
-`OpenTelemetry.*`, xUnit packages, etc.) using the same NuGet API.
+Also grep all `.csproj` files for `Aspire.AppHost.Sdk` and note its current
+version. Then check NuGet for a newer stable version of that SDK:
 
-### Step 3 — Decide whether to update
+```bash
+curl -s "https://api.nuget.org/v3-flatcontainer/aspire.apphost.sdk/index.json"
+```
 
-- If ALL packages are already at their latest stable versions, report
+Pick the highest version without a hyphen (`-`).
+
+### Step 2 — Decide whether to update
+
+- If `dotnet list package --outdated` reports no outdated packages AND
+  `Aspire.AppHost.Sdk` is already at the latest version, report
   "No updates available" and stop (use noop safe output).
-- If any package has a newer stable version, proceed to Step 4.
+- If any package has a newer stable version, proceed to Step 3.
 
-### Step 4 — Apply version updates
+### Step 3 — Apply version updates
 
 1. Edit `Directory.Packages.props` — update each `<PackageVersion>` `Version`
    attribute to the latest stable version found.
@@ -94,7 +92,7 @@ Also check for updates to other non-Aspire packages listed in
 `Aspire.Hosting.Testing`, `Aspire.MongoDB.Driver`) on the **same version**
 so they stay in sync.
 
-### Step 5 — Validate the update
+### Step 4 — Validate the update
 
 Run the solution build AND tests to make sure the update compiles and doesn't
 break existing behavior:
@@ -115,7 +113,7 @@ If the build or tests fail, read the error output, attempt to fix the issue
 re-run. If a fix isn't straightforward, still open the PR but clearly note
 the failure details in the PR description so a human can investigate.
 
-### Step 6 — Open a pull request
+### Step 5 — Open a pull request
 
 Create a pull request with:
 - **Title:** `[aspire-update] Upgrade Aspire packages to <new-version>`
