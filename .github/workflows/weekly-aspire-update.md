@@ -96,17 +96,24 @@ so they stay in sync.
 
 ### Step 5 — Validate the update
 
-Run the solution build to make sure the update compiles:
+Run the solution build AND tests to make sure the update compiles and doesn't
+break existing behavior:
 
 ```bash
 dotnet restore azure-databases-aspire.sln
 dotnet build azure-databases-aspire.sln --no-restore -c Release
+dotnet test azure-databases-aspire.sln --no-build -c Release
 ```
 
-If the build fails, read the error output, attempt to fix the issue (e.g.,
-API changes, missing packages), and rebuild. If a fix isn't straightforward,
-still open the PR but note the build failure in the PR description so a human
-can investigate.
+The unit tests validate connection string formats, Aspire manifest output,
+resource annotations, and public API surface — exactly the things most likely
+to break during an Aspire version upgrade. Integration tests require Docker
+and will skip themselves automatically if Docker is unavailable.
+
+If the build or tests fail, read the error output, attempt to fix the issue
+(e.g., API changes, renamed types, connection string format changes), and
+re-run. If a fix isn't straightforward, still open the PR but clearly note
+the failure details in the PR description so a human can investigate.
 
 ### Step 6 — Open a pull request
 
