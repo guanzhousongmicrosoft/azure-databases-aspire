@@ -44,7 +44,7 @@ and, if so, update the project to use them and open a pull request.
 ### Context
 
 This repository (`azure-databases-aspire`) is a .NET Aspire hosting extension
-for Amazon DocumentDB. It depends on the `Aspire.Hosting` NuGet meta-package
+for DocumentDB. It depends on the `Aspire.Hosting` NuGet meta-package
 and several related Aspire packages. All package versions are centrally managed
 in `Directory.Packages.props` using Central Package Management (CPM).
 
