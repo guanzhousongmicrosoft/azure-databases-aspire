@@ -27,6 +27,8 @@ jobs:
 
       - name: Check for updates
         id: check
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
         run: |
           # Current version from Directory.Packages.props
           CURRENT=$(grep 'Include="Aspire\.Hosting"' Directory.Packages.props \
@@ -34,13 +36,20 @@ jobs:
           echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
 
           # Determine target version
-          if [ -n "${{ inputs.version }}" ]; then
-            LATEST="${{ inputs.version }}"
+          if [ -n "$INPUT_VERSION" ]; then
+            LATEST="$INPUT_VERSION"
           else
             # Query NuGet for latest stable version
             LATEST=$(curl -sf https://api.nuget.org/v3-flatcontainer/aspire.hosting/index.json \
               | jq -r '[.versions[] | select(test("^[0-9]+\\.[0-9]+\\.[0-9]+$"))] | last')
           fi
+
+          # Validate resolved version
+          if [ -z "$LATEST" ] || [ "$LATEST" = "null" ]; then
+            echo "::error::Failed to resolve Aspire version"
+            exit 1
+          fi
+
           echo "latest=$LATEST" >> "$GITHUB_OUTPUT"
 
           if [ "$CURRENT" = "$LATEST" ]; then
@@ -56,8 +65,8 @@ jobs:
         id: existing
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.check.outputs.latest }}
         run: |
-          VERSION="${{ steps.check.outputs.latest }}"
           BRANCH="chore/aspire-update-$VERSION"
           COUNT=$(gh pr list --head "$BRANCH" --state open --json number --jq 'length')
           if [ "$COUNT" -gt 0 ]; then
@@ -69,9 +78,9 @@ jobs:
 
       - name: Update Aspire versions
         if: steps.check.outputs.skip == 'false' && steps.existing.outputs.skip == 'false'
+        env:
+          VERSION: ${{ steps.check.outputs.latest }}
         run: |
-          VERSION="${{ steps.check.outputs.latest }}"
-
           # Update all Aspire.* package versions in Directory.Packages.props
           sed -i 's/\(Include="Aspire\.[^"]*" Version="\)[^"]*/\1'"$VERSION"'/' Directory.Packages.props
 
@@ -93,9 +102,9 @@ jobs:
         if: steps.check.outputs.skip == 'false' && steps.existing.outputs.skip == 'false'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.check.outputs.latest }}
+          CURRENT: ${{ steps.check.outputs.current }}
         run: |
-          VERSION="${{ steps.check.outputs.latest }}"
-          CURRENT="${{ steps.check.outputs.current }}"
           BRANCH="chore/aspire-update-$VERSION"
 
           git config user.name "github-actions[bot]"
