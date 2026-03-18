@@ -10,12 +10,23 @@ This repository contains .NET Aspire hosting integrations for database services.
 
 ## Dependency Updates
 
-This repository uses GitHub Dependabot to keep its .NET dependencies current:
+This repository uses two complementary systems to keep dependencies current:
 
-- `nuget` updates scan the repository root, which covers the centrally managed package versions in `Directory.Packages.props` and the `PackageReference` items in the project files.
-- `dotnet-sdk` updates keep the SDK version in `global.json` current.
+### Aspire (dedicated workflow)
 
-One Aspire-related dependency still needs a manual follow-up when an Aspire update PR is opened: Dependabot does not currently update `Aspire.AppHost.Sdk` when it is pinned in a `Project Sdk="Aspire.AppHost.Sdk/<version>"` attribute. Before merging an Aspire package update, update the matching SDK version in:
+All Aspire versions are updated atomically by `.github/workflows/update-aspire.yml`:
 
-- `playground/Playground.csproj`
-- `tests/Aspire.Hosting.DocumentDB.EndToEndApp/Aspire.Hosting.DocumentDB.EndToEndApp.csproj`
+- Runs weekly (Monday 9 AM UTC) and on manual `workflow_dispatch`
+- Checks NuGet for the latest stable `Aspire.Hosting` version
+- Updates all `Aspire.*` packages in `Directory.Packages.props` and `Aspire.AppHost.Sdk` in `global.json` `msbuild-sdks`
+- Validates with `dotnet build` before creating a PR
+
+This ensures Aspire NuGet packages and the AppHost SDK are always in sync — Dependabot cannot update MSBuild SDK versions reliably ([#8615](https://github.com/dependabot/dependabot-core/issues/8615), [#12824](https://github.com/dependabot/dependabot-core/issues/12824)).
+
+### Everything else (Dependabot)
+
+Dependabot handles non-Aspire dependencies via `.github/dependabot.yml`:
+
+- **NuGet** — `Microsoft.Extensions.*`, `OpenTelemetry.*`, `MongoDB.*`, `xunit*`, `MinVer`, etc.
+- **dotnet-sdk** — .NET SDK version in `global.json`
+- **github-actions** — workflow action versions

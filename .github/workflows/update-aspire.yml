@@ -1,0 +1,117 @@
+name: Update Aspire Dependencies
+
+on:
+  schedule:
+    - cron: "0 9 * * 1" # Weekly on Monday at 9 AM UTC
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Aspire version (leave empty for latest stable)"
+        required: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Check for updates
+        id: check
+        run: |
+          # Current version from Directory.Packages.props
+          CURRENT=$(grep 'Include="Aspire\.Hosting"' Directory.Packages.props \
+            | sed 's/.*Version="\([^"]*\)".*/\1/')
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+
+          # Determine target version
+          if [ -n "${{ inputs.version }}" ]; then
+            LATEST="${{ inputs.version }}"
+          else
+            # Query NuGet for latest stable version
+            LATEST=$(curl -sf https://api.nuget.org/v3-flatcontainer/aspire.hosting/index.json \
+              | jq -r '[.versions[] | select(test("^[0-9]+\\.[0-9]+\\.[0-9]+$"))] | last')
+          fi
+          echo "latest=$LATEST" >> "$GITHUB_OUTPUT"
+
+          if [ "$CURRENT" = "$LATEST" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "✅ Already at latest Aspire $CURRENT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "📦 Update available: $CURRENT → $LATEST"
+          fi
+
+      - name: Check for existing PR
+        if: steps.check.outputs.skip == 'false'
+        id: existing
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.check.outputs.latest }}"
+          BRANCH="chore/aspire-update-$VERSION"
+          COUNT=$(gh pr list --head "$BRANCH" --state open --json number --jq 'length')
+          if [ "$COUNT" -gt 0 ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "⏭️ PR already exists for $VERSION"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update Aspire versions
+        if: steps.check.outputs.skip == 'false' && steps.existing.outputs.skip == 'false'
+        run: |
+          VERSION="${{ steps.check.outputs.latest }}"
+
+          # Update all Aspire.* package versions in Directory.Packages.props
+          sed -i 's/\(Include="Aspire\.[^"]*" Version="\)[^"]*/\1'"$VERSION"'/' Directory.Packages.props
+
+          # Update Aspire.AppHost.Sdk in global.json msbuild-sdks
+          jq --arg v "$VERSION" '.["msbuild-sdks"]["Aspire.AppHost.Sdk"] = $v' \
+            global.json > global.json.tmp && mv global.json.tmp global.json
+
+          echo "Updated all Aspire references to $VERSION"
+          echo "--- Directory.Packages.props (Aspire lines) ---"
+          grep 'Aspire\.' Directory.Packages.props
+          echo "--- global.json ---"
+          cat global.json
+
+      - name: Validate build
+        if: steps.check.outputs.skip == 'false' && steps.existing.outputs.skip == 'false'
+        run: dotnet build azure-databases-aspire.sln
+
+      - name: Create pull request
+        if: steps.check.outputs.skip == 'false' && steps.existing.outputs.skip == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.check.outputs.latest }}"
+          CURRENT="${{ steps.check.outputs.current }}"
+          BRANCH="chore/aspire-update-$VERSION"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add Directory.Packages.props global.json
+          git commit -m "chore: upgrade Aspire to $VERSION"
+          git push origin "$BRANCH"
+
+          gh pr create \
+            --title "chore: upgrade Aspire to $VERSION" \
+            --body "Automated Aspire dependency update from \`$CURRENT\` to \`$VERSION\`.
+
+          ## Changes
+          - All \`Aspire.*\` packages in \`Directory.Packages.props\`
+          - \`Aspire.AppHost.Sdk\` in \`global.json\` \`msbuild-sdks\`
+
+          Build validated ✅" \
+            --base main
