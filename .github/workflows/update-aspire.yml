@@ -50,6 +50,12 @@ jobs:
             exit 1
           fi
 
+          # Guard against malformed version strings (XML/shell injection)
+          if ! [[ "$LATEST" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9\.]+)?$ ]]; then
+            echo "::error::Invalid version format: $LATEST"
+            exit 1
+          fi
+
           echo "latest=$LATEST" >> "$GITHUB_OUTPUT"
 
           if [ "$CURRENT" = "$LATEST" ]; then
