@@ -69,6 +69,25 @@ public class AddDocumentDBTests
     }
 
     [Fact]
+    public void WithHostPortUpdatesExistingTcpEndpoint()
+    {
+        var appBuilder = DistributedApplication.CreateBuilder();
+        appBuilder.AddDocumentDB("DocumentDB")
+            .WithHostPort(10261);
+
+        using var app = appBuilder.Build();
+
+        var appModel = app.Services.GetRequiredService<DistributedApplicationModel>();
+
+        var containerResource = Assert.Single(appModel.Resources.OfType<DocumentDBServerResource>());
+        var endpoint = Assert.Single(containerResource.Annotations.OfType<EndpointAnnotation>());
+
+        Assert.Equal("tcp", endpoint.Name);
+        Assert.Equal(10261, endpoint.Port);
+        Assert.Equal(10260, endpoint.TargetPort);
+    }
+
+    [Fact]
     public async Task DocumentDBCreatesConnectionString()
     {
         var appBuilder = DistributedApplication.CreateBuilder();
