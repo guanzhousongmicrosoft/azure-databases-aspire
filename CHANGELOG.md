@@ -4,6 +4,21 @@ All notable changes to the `Aspire.Hosting.DocumentDB` package will be documente
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project uses [MinVer](https://github.com/adamralph/minver) for versioning based on Git tags.
 
+## [0.109.1] - 2026-04-13
+
+### Changed
+- Upgraded to .NET 10 SDK (10.0.100)
+- Upgraded to .NET Aspire 13.2.2 (Aspire.Hosting, Aspire.Hosting.Testing, Aspire.MongoDB.Driver)
+- Updated Microsoft.Extensions.* packages to 10.0.5+
+- Updated MongoDB.Driver to 3.6.0
+- Updated AspNetCore.HealthChecks.MongoDb to 9.0.0
+
+### Added
+- Comprehensive unit and integration test suite
+- Build and test CI workflow to gate pull requests
+- Dependabot configuration for weekly NuGet dependency updates
+- Improved documentation with getting started guide and examples
+
 ## [0.109.0] - 2026-04-07
 
 ### Added
@@ -34,5 +49,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - SCRAM-SHA-256 authentication support
 - Container image: `ghcr.io/documentdb/documentdb/documentdb-local`
 
+[0.109.1]: https://github.com/microsoft/azure-databases-aspire/releases/tag/v0.109.1
 [0.109.0]: https://github.com/microsoft/azure-databases-aspire/releases/tag/v0.109.0
 [0.1.0]: https://github.com/microsoft/azure-databases-aspire/compare/32cee17...4aa9aac
